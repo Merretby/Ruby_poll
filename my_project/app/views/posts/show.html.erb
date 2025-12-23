@@ -1,0 +1,49 @@
+<h1><%= @post.title %></h1>
+
+<div class="post-details">
+  <p class="post-meta">
+    By: <%= @post.user.author_name %> |
+    <% if @post.published_at %>
+      Published <%= time_ago_in_words(@post.published_at) %> ago
+    <% else %>
+      Not published
+    <% end %>
+  </p>
+
+  <div class="post-body">
+    <%= simple_format(@post.body) %>
+  </div>
+</div>
+
+<div class="post-actions">
+  <%= link_to 'Edit', edit_post_path(@post) %> |
+  <%= link_to 'Back', posts_path %> |
+  <%= link_to 'Delete', @post, data: { turbo_method: :delete, turbo_confirm: 'Are you sure?' } %>
+</div>
+
+<hr>
+
+<h3>Comments (<%= @post.comments.count %>)</h3>
+
+<div id="comments">
+  <%= render @post.comments %>
+</div>
+
+<hr>
+
+<h4>Add a Comment:</h4>
+<%= form_with model: [@post, @post.comments.build], local: true do |form| %>
+   <div>
+    <%= form.label :user_id, "Comment as:" %>
+    <%= form.collection_select :user_id, User.all, :id, :author_name, { prompt: "Select a user" }, { required: true } %>
+  </div>
+  
+  <div>
+    <%= form.label :content, "Your comment:" %>
+    <%= form.text_area :content, rows: 4, required: true, placeholder: "Write your comment here..." %>
+  </div>
+  
+  <div>
+    <%= form.submit "Post Comment" %>
+  </div>
+<% end %>

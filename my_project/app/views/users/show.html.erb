@@ -1,0 +1,18 @@
+<div class="container">
+  <h1>User Details</h1>
+
+  <div class="card">
+    <div class="card-body">
+      <p><strong>Name:</strong> <%= @user.name %></p>
+      <p><strong>Email:</strong> <%= @user.email %></p>
+      <p><strong>Role:</strong> <%= @user.role %></p>
+      <p><strong>Created:</strong> <%= @user.created_at.strftime("%B %d, %Y") %></p>
+    </div>
+  </div>
+
+  <div class="mt-3">
+    <%= link_to "Edit", edit_user_path(@user), class: "btn btn-primary" %>
+    <%= link_to "Back to Users", users_path, class: "btn btn-secondary" %>
+    <%= link_to "Delete", user_path(@user), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-danger" %>
+  </div>
+</div>

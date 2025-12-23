@@ -1,0 +1,8 @@
+<div class="comment">
+  <p class="author"><strong><%= comment.user.author_name %></strong></p>
+  <p class="comment-content"><%= comment.content %></p>
+  <p class="comment-meta">
+    <small><%= time_ago_in_words(comment.created_at) %> ago</small>
+    <%= button_to "Delete", post_comment_path(comment.post, comment), method: :delete, data: { confirm: "Are you sure?" }, class: "delete-btn" %>
+  </p>
+</div>
