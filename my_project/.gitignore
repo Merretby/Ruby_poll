@@ -33,30 +33,3 @@
 # Ignore key files for decrypting credentials and more.
 /config/*.key
 
-# Dependencies
-vendor/bundle/
-.bundle/
-
-# Environment variables
-.env
-.env.local
-
-# Logs
-*.log
-
-# Database
-*.sqlite3
-*.db
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
-
-# Temporary files
-*.swp
-*.swo
-*~

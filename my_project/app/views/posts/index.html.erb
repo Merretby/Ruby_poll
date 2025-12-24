@@ -1,8 +1,37 @@
 <h1>Posts</h1>
 
+<div style="margin-bottom: 20px; padding: 15px; background-color: #f5f5f5; border-radius: 5px;">
+  <%= form_with url: posts_path, method: :get, local: true do |f| %>
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <%= f.select :status, 
+          options_for_select([
+            ['All Posts', ''],
+            ['Published', 'published'],
+            ['Drafts', 'drafts']
+          ], params[:status]),
+          {},
+          { style: 'padding: 8px; border-radius: 4px;' } %>
+      
+      <%= f.text_field :q, 
+          placeholder: 'Search posts...', 
+          value: params[:q],
+          style: 'padding: 8px; border-radius: 4px; flex: 1;' %>
+      
+      <%= f.submit 'Filter', style: 'padding: 8px 16px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;' %>
+      
+      <%= link_to 'Clear', posts_path, style: 'padding: 8px 16px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 4px;' %>
+    </div>
+  <% end %>
+</div>
+
 <%= link_to 'New Post', new_post_path, class: 'btn btn-primary' %>
 
 <div id="posts">
-  <%= render @posts %>
+  <% @posts.each do |post| %>
+    <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 5px;">
+      <h2><%= link_to post.title, post %></h2>
+      <p>By <%= post.user.name %> | <%= post.comments_count %> comments</p>
+      <p><%= truncate(post.body, length: 200) %></p>
+    </div>
+  <% end %>
 </div>
-

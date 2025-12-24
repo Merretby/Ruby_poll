@@ -1,7 +1,11 @@
 class PostsController < ApplicationController
   before_action :set_post, only: [:show, :edit, :update, :destroy]
   def index
-    @posts = Post.all
+    @posts = Post.includes(:user).recent
+    @posts = @posts.published if params[:status] == 'published'
+    @posts = @posts.drafts if params[:status] == 'drafts'
+    @posts = @posts.by_author(params[:author_id]) if params[:author_id].present?
+    @posts = @posts.search(params[:q]) if params[:q].present?
   end
 
   def show
@@ -13,8 +17,6 @@ class PostsController < ApplicationController
 
   def create
     @post = Post.new(post_params)
-    @post.user = current_user
-    # @post.user = user.first
     if @post.save
       redirect_to @post, notice: 'Post was successfully created.'
     else
@@ -41,12 +43,12 @@ class PostsController < ApplicationController
   private
 
   def set_post
-    @post = Post.find_by!(slug: params[:id])
+    @post = Post.includes(:user, :comments).find_by!(slug: params[:id])
   rescue ActiveRecord::RecordNotFound
     redirect_to posts_path, alert: 'Post not found.'
   end
 
   def post_params
-    params.require(:post).permit(:title, :body, :published_at)
+    params.require(:post).permit(:title, :body, :published_at, :user_id)
   end
 end

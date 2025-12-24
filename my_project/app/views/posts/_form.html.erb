@@ -1,31 +1,36 @@
 <%= form_with(model: post, local: true) do |form| %>
   <% if post.errors.any? %>
-    <div id="error_explanation">
+    <div style="color: red">
       <h2><%= pluralize(post.errors.count, "error") %> prohibited this post from being saved:</h2>
       <ul>
-        <% post.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
+        <% post.errors.each do |error| %>
+          <li><%= error.full_message %></li>
         <% end %>
       </ul>
     </div>
   <% end %>
 
-  <div class="field">
+  <div>
+    <%= form.label :user_id, "Author" %>
+    <%= form.collection_select :user_id, User.all, :id, :name, { prompt: 'Select an author' } %>
+  </div>
+
+  <div>
     <%= form.label :title %>
-    <%= form.text_field :title, class: "form-control" %>
+    <%= form.text_field :title %>
   </div>
 
-  <div class="field">
+  <div>
     <%= form.label :body %>
-    <%= form.text_area :body, rows: 10, class: "form-control" %>
+    <%= form.text_area :body %>
   </div>
 
-  <div class="field">
+  <div>
     <%= form.label :published_at %>
-    <%= form.datetime_select :published_at, class: "form-control" %>
+    <%= form.datetime_field :published_at %>
   </div>
 
-  <div class="actions">
-    <%= form.submit class: "btn btn-primary" %>
+  <div>
+    <%= form.submit %>
   </div>
 <% end %>

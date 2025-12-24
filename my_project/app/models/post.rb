@@ -8,6 +8,12 @@ class Post < ApplicationRecord
 
     before_validation :generate_slug
 
+    scope :published, -> {where.not(published_at: nil).where('published_at <= ?', Time.current)}
+    scope :drafts, -> {where(published_at: nil).or(where('published_at > ?', Time.current))}
+    scope :recent, -> {order(published_at: :desc)}
+    scope :by_author, ->(user_id) {where(user_id: user_id)}
+    scope :search, ->(query) {where('title LIKE ? OR body LIKE ?', "%#{query}%", "%#{query}%")}
+
     def published?
         published_at.present?
     end
