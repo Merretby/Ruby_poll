@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [ :show, :edit, :update, :destroy ]
+  before_action :set_user, only: [:show, :edit, :update, :destroy]
 
   def index
     @users = User.all
@@ -16,7 +16,10 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
 
     if @user.save
-      redirect_to @user, notice: "User was successfully created."
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to @user, notice: "User was successfully created." }
+      end
     else
       render :new, status: :unprocessable_entity
     end
@@ -27,7 +30,10 @@ class UsersController < ApplicationController
 
   def update
     if @user.update(user_params)
-      redirect_to @user, notice: "User was successfully updated."
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to @user, notice: "User was successfully updated." }
+      end
     else
       render :edit, status: :unprocessable_entity
     end
@@ -35,7 +41,10 @@ class UsersController < ApplicationController
 
   def destroy
     @user.destroy
-    redirect_to users_path, notice: "User was successfully deleted."
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to users_path, notice: "User was successfully deleted." }
+    end
   end
 
   private
@@ -45,6 +54,6 @@ class UsersController < ApplicationController
   end
 
   def user_params
-    params.expect(user: [ :name, :email, :role ])
+    params.expect(user: [:name, :email, :role])
   end
 end

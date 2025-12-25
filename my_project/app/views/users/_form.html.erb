@@ -1,4 +1,4 @@
-<%= form_with(model: user, class: 'space-y-6') do |form| %>
+<%= form_with(model: user, class: 'space-y-6', data: { controller: "form", action: "turbo:submit-start->form#disableSubmit" }) do |form| %>
   <% if user.errors.any? %>
     <div class="bg-red-50 border border-red-200 rounded-lg p-4">
       <h4 class="text-red-800 font-semibold mb-2"><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h4>
@@ -26,6 +26,6 @@
   </div>
 
   <div>
-    <%= form.submit class: "w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg cursor-pointer" %>
+    <%= form.submit data: { form_target: "submit" }, class: "w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg cursor-pointer" %>
   </div>
 <% end %>
