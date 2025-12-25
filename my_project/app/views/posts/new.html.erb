@@ -1,7 +1,14 @@
-<h1>New Post</h1>
+<turbo-frame id="posts">
+  <div class="max-w-2xl mx-auto">
+    <div class="mb-4">
+      <%= link_to posts_path, class: 'text-gray-600 hover:text-gray-900' do %>
+        ← Back to Posts
+      <% end %>
+    </div>
 
-<%= render 'form', post: @post %>
-
-<br>
-
-<%= link_to 'Back', posts_path %>
+    <div class="bg-white rounded-lg shadow-lg p-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-6">Create New Post</h1>
+      <%= render 'form', post: @post %>
+    </div>
+  </div>
+</turbo-frame>

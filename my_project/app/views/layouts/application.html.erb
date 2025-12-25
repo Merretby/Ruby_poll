@@ -23,14 +23,32 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <header class="banner">
-      <nav>
-        <%= link_to 'Home', posts_path %> |
-        <%= link_to 'New Post', new_post_path %>
-      </nav>
+  <body class="bg-gray-50 min-h-screen">
+    <header class="bg-white shadow-sm border-b border-gray-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center space-x-8">
+            <h1 class="text-xl font-bold text-gray-900">📝 Blog</h1>
+            <nav class="flex space-x-4">
+              <%= link_to 'Posts', posts_path, class: 'text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium' %>
+              <%= link_to 'Users', users_path, class: 'text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium' %>
+            </nav>
+          </div>
+          <div>
+            <%= link_to 'New Post', new_post_path, class: 'bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium' %>
+          </div>
+        </div>
+      </div>
     </header>
     
-    <%= yield %>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <%= yield %>
+    </main>
+    
+    <footer class="bg-white border-t border-gray-200 mt-auto">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <p class="text-center text-gray-500 text-sm">© 2025 Blog App</p>
+      </div>
+    </footer>
   </body>
 </html>

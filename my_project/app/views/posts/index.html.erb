@@ -1,37 +1,39 @@
-<h1>Posts</h1>
+<div class="space-y-6">
+  <div class="flex justify-between items-center">
+    <h1 class="text-3xl font-bold text-gray-900">Posts</h1>
+    <%= link_to 'Create Post', new_post_path, data: { turbo_frame: "posts" }, class: 'bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium' %>
+  </div>
 
-<div style="margin-bottom: 20px; padding: 15px; background-color: #f5f5f5; border-radius: 5px;">
-  <%= form_with url: posts_path, method: :get, local: true do |f| %>
-    <div style="display: flex; gap: 10px; align-items: center;">
-      <%= f.select :status, 
-          options_for_select([
-            ['All Posts', ''],
-            ['Published', 'published'],
-            ['Drafts', 'drafts']
-          ], params[:status]),
-          {},
-          { style: 'padding: 8px; border-radius: 4px;' } %>
-      
-      <%= f.text_field :q, 
-          placeholder: 'Search posts...', 
-          value: params[:q],
-          style: 'padding: 8px; border-radius: 4px; flex: 1;' %>
-      
-      <%= f.submit 'Filter', style: 'padding: 8px 16px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;' %>
-      
-      <%= link_to 'Clear', posts_path, style: 'padding: 8px 16px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 4px;' %>
+  <div class="bg-white rounded-lg shadow p-4">
+    <%= form_with url: posts_path, method: :get, data: { controller: "filter", turbo_frame: "posts-list" } do |f| %>
+      <div class="flex gap-3">
+        <%= f.select :status, 
+            options_for_select([
+              ['All Posts', ''],
+              ['Published', 'published'],
+              ['Drafts', 'drafts']
+            ], params[:status]),
+            {},
+            { class: 'px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500',
+              data: { action: "change->filter#submit" } } %>
+        
+        <%= f.text_field :q, 
+            placeholder: 'Search posts...', 
+            value: params[:q],
+            class: 'flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500',
+            data: { action: "input->filter#submit" } %>
+        
+        <%= link_to 'Clear', posts_path, class: 'px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg' %>
+      </div>
+    <% end %>
+  </div>
+
+  <turbo-frame id="posts">
+  </turbo-frame>
+
+  <turbo-frame id="posts-list">
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <%= render @posts %>
     </div>
-  <% end %>
-</div>
-
-<%= link_to 'New Post', new_post_path, class: 'btn btn-primary' %>
-
-<div id="posts">
-  <% @posts.each do |post| %>
-    <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 5px;">
-      <h2><%= link_to post.title, post %></h2>
-      <p>By <%= post.user.name %> | <%= post.comments_count %> comments</p>
-      <p><%= truncate(post.body, length: 200) %></p>
-    </div>
-  <% end %>
+  </turbo-frame>
 </div>
