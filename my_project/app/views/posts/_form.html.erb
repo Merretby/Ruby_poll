@@ -1,4 +1,4 @@
-<%= form_with(model: post, class: 'space-y-6', data: { controller: "form", action: "turbo:submit-start->form#disableSubmit" }) do |form| %>
+<%= form_with(model: post, class: 'space-y-6', data: { turbo_frame: "_top", controller: "form", action: "turbo:submit-start->form#disableSubmit" }) do |form| %>
   <% if post.errors.any? %>
     <div class="bg-red-50 border border-red-200 rounded-lg p-4">
       <h2 class="text-red-800 font-semibold mb-2"><%= pluralize(post.errors.count, "error") %> prohibited this post from being saved:</h2>

@@ -1,5 +1,8 @@
 class Post < ApplicationRecord
+    include ActionView::RecordIdentifier
+    
     belongs_to :user
+    belongs_to :publisher, class_name: 'User', optional: true
     has_many :comments, dependent: :destroy
 
     validates :title, presence: true, length: {in: 5..120}
@@ -7,6 +10,7 @@ class Post < ApplicationRecord
     validates :slug, uniqueness: { scope: :user_id }
 
     before_validation :generate_slug
+    after_update_commit :broadcast_status_update, if: :saved_change_to_published_at?
 
     scope :published, -> {where.not(published_at: nil).where('published_at <= ?', Time.current)}
     scope :drafts, -> {where(published_at: nil).or(where('published_at > ?', Time.current))}
@@ -37,5 +41,12 @@ class Post < ApplicationRecord
             self.slug = "#{base_slug}-#{count}"
             count += 1
         end
+    end
+
+    def broadcast_status_update
+        broadcast_replace_to "posts",
+            target: "#{dom_id(self, :status)}",
+            partial: "posts/status",
+            locals: { post: self }
     end
 end

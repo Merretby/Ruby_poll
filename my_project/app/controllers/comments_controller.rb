@@ -2,12 +2,26 @@ class CommentsController < ApplicationController
   before_action :set_post
 
   def create
-    @comment = @post.comments.build(comment_params)
+    user = User.find(comment_params[:user_id])
+    
+    result = Comments::Create.call(
+      post: @post,
+      user: user,
+      comment_params: comment_params.except(:user_id)
+    )
 
-    if @comment.save
+    if result.success?
       redirect_to @post, notice: "Comment added successfully."
     else
-      redirect_to @post, alert: "Failed to add comment."
+      alert_message = case result.error_code
+                      when :spam_blocked
+                        "Your comment was blocked for containing spam content."
+                      when :invalid
+                        "Failed to add comment: #{result.error}"
+                      else
+                        "Failed to add comment."
+                      end
+      redirect_to @post, alert: alert_message
     end
   end
 

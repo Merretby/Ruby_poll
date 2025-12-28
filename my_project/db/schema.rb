@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_24_131132) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_28_152745) do
   create_table "comments", force: :cascade do |t|
     t.text "content"
     t.datetime "created_at", null: false
@@ -26,11 +26,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_24_131132) do
     t.integer "comments_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "published_at"
+    t.integer "publisher_id"
     t.string "slug"
     t.string "title"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["comments_count"], name: "index_posts_on_comments_count"
+    t.index ["publisher_id"], name: "index_posts_on_publisher_id"
     t.index ["slug", "user_id"], name: "index_posts_on_slug_and_user_id", unique: true
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
@@ -47,4 +49,5 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_24_131132) do
   add_foreign_key "comments", "posts"
   add_foreign_key "comments", "users"
   add_foreign_key "posts", "users"
+  add_foreign_key "posts", "users", column: "publisher_id"
 end

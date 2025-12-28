@@ -1,5 +1,5 @@
 class PostsController < ApplicationController
-  before_action :set_post, only: [:show, :edit, :update, :destroy]
+  before_action :set_post, only: [:show, :edit, :update, :destroy, :publish, :unpublish]
   def index
     @posts = Post.includes(:user).recent
     @posts = @posts.published if params[:status] == 'published'
@@ -16,13 +16,19 @@ class PostsController < ApplicationController
   end
 
   def create
-    @post = Post.new(post_params)
-    if @post.save
-      respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to posts_path, notice: 'Post was successfully created.' }
-      end
+    user = User.find(post_params[:user_id])
+    publish_now = post_params[:published_at].present?
+    
+    result = Posts::Create.call(
+      user: user,
+      post_params: post_params.except(:user_id, :published_at),
+      publish_now: publish_now
+    )
+    
+    if result.success?
+      redirect_to posts_path, notice: 'Post was successfully created.'
     else
+      @post = result.post
       render :new, status: :unprocessable_entity
     end
   end
@@ -32,10 +38,7 @@ class PostsController < ApplicationController
 
   def update
     if @post.update(post_params)
-      respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to posts_path, notice: 'Post was successfully updated.' }
-      end
+      redirect_to posts_path, notice: 'Post was successfully updated.'
     else
       render :edit, status: :unprocessable_entity
     end
@@ -46,6 +49,33 @@ class PostsController < ApplicationController
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_to posts_path, notice: 'Post was successfully deleted.' }
+    end
+  end
+
+  def publish
+    # For demo purposes, using first user. In production, use current_user
+    publisher = User.first
+    
+    result = Posts::Publish.call(post: @post, publisher: publisher)
+    
+    respond_to do |format|
+      if result.success?
+        format.turbo_stream
+        format.html { redirect_to @post, notice: 'Post was successfully published.' }
+      else
+        format.html { redirect_to @post, alert: result.error }
+      end
+    end
+  end
+
+  def unpublish
+    respond_to do |format|
+      if @post.update(published_at: nil, publisher: nil)
+        format.turbo_stream
+        format.html { redirect_to @post, notice: 'Post was successfully unpublished.' }
+      else
+        format.html { redirect_to @post, alert: 'Failed to unpublish post.' }
+      end
     end
   end
 

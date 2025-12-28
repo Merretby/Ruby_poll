@@ -11,13 +11,13 @@
       <div class="flex items-center space-x-4 text-blue-100">
         <span>By <%= @post.user.author_name %></span>
         <span>•</span>
-        <span>
+        <%= turbo_frame_tag dom_id(@post, :status) do %>
           <% if @post.published_at %>
             Published <%= time_ago_in_words(@post.published_at) %> ago
           <% else %>
             <span class="px-2 py-1 bg-yellow-500 rounded text-white text-sm">Draft</span>
           <% end %>
-        </span>
+        <% end %>
       </div>
     </div>
 
@@ -27,9 +27,14 @@
       </div>
     </div>
 
-    <div class="px-8 py-4 bg-gray-50 border-t border-gray-200 flex gap-3">
+    <div id="<%= dom_id(@post, :actions) %>" class="px-8 py-4 bg-gray-50 border-t border-gray-200 flex gap-3">
+      <% if @post.published? %>
+        <%= link_to 'Unpublish', unpublish_post_path(@post), data: { turbo_method: :patch }, class: 'px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg' %>
+      <% else %>
+        <%= link_to 'Publish', publish_post_path(@post), data: { turbo_method: :patch }, class: 'px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg' %>
+      <% end %>
       <%= link_to 'Edit', edit_post_path(@post), class: 'px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg' %>
-      <%= link_to 'Delete', @post, data: { turbo_method: :delete, turbo_confirm: 'Are you sure?' }, class: 'px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg' %>
+      <%= link_to 'Delete', @post, data: { turbo_method: :delete }, class: 'px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg' %>
     </div>
   </article>
 

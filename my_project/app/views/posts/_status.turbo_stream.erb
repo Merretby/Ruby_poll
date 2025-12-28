@@ -1,0 +1,11 @@
+<turbo-stream action="replace" target="<%= dom_id(post, :status) %>">
+  <template>
+    <%= turbo_frame_tag dom_id(post, :status) do %>
+      <% if post.published_at %>
+        <span class="inline-block px-2 py-1 text-xs bg-green-100 text-green-800 rounded">Published <%= time_ago_in_words(post.published_at) %> ago</span>
+      <% else %>
+        <span class="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">Draft</span>
+      <% end %>
+    <% end %>
+  </template>
+</turbo-stream>
