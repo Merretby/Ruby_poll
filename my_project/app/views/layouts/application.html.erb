@@ -32,11 +32,20 @@
             <h1 class="text-xl font-bold text-gray-900">📝 Blog</h1>
             <nav class="flex space-x-4">
               <%= link_to 'Posts', posts_path, class: 'text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium' %>
-              <%= link_to 'Users', users_path, class: 'text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium' %>
+              <% if user_signed_in? && current_user.admin? %>
+                <%= link_to 'Users', users_path, class: 'text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium' %>
+              <% end %>
             </nav>
           </div>
-          <div>
-            <%= link_to 'New Post', new_post_path, class: 'bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium' %>
+          <div class="flex items-center space-x-3">
+            <% if user_signed_in? %>
+              <span class="text-gray-700 text-sm">Hello, <%= current_user.name %></span>
+              <%= link_to 'New Post', new_post_path, class: 'bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium' %>
+              <%= button_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'text-gray-700 hover:text-red-600 px-3 py-2 text-sm font-medium' %>
+            <% else %>
+              <%= link_to 'Sign In', new_user_session_path, class: 'text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium' %>
+              <%= link_to 'Sign Up', new_user_registration_path, class: 'bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium' %>
+            <% end %>
           </div>
         </div>
       </div>

@@ -26,7 +26,11 @@
   
   <div class="flex gap-2 pt-4 border-t border-gray-200 mt-auto">
     <%= link_to 'View', post, data: { turbo_frame: "_top" }, class: 'flex-1 text-center px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded' %>
-    <%= link_to 'Edit', edit_post_path(post), data: { turbo_frame: "posts" }, class: 'flex-1 text-center px-3 py-2 text-sm text-yellow-600 hover:bg-yellow-50 rounded' %>
-    <%= button_to 'Delete', post, method: :delete, class: 'flex-1 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded border-0 bg-transparent cursor-pointer' %>
+    <% if allowed_to?(:update?, post) %>
+      <%= link_to 'Edit', edit_post_path(post), data: { turbo_frame: "posts" }, class: 'flex-1 text-center px-3 py-2 text-sm text-yellow-600 hover:bg-yellow-50 rounded' %>
+    <% end %>
+    <% if allowed_to?(:destroy?, post) %>
+      <%= button_to 'Delete', post, method: :delete, class: 'flex-1 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded border-0 bg-transparent cursor-pointer' %>
+    <% end %>
   </div>
 </div>

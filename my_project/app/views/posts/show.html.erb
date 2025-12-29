@@ -28,13 +28,19 @@
     </div>
 
     <div id="<%= dom_id(@post, :actions) %>" class="px-8 py-4 bg-gray-50 border-t border-gray-200 flex gap-3">
-      <% if @post.published? %>
-        <%= link_to 'Unpublish', unpublish_post_path(@post), data: { turbo_method: :patch }, class: 'px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg' %>
-      <% else %>
-        <%= link_to 'Publish', publish_post_path(@post), data: { turbo_method: :patch }, class: 'px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg' %>
+      <% if allowed_to?(:publish?, @post) || allowed_to?(:unpublish?, @post) %>
+        <% if @post.published? %>
+          <%= link_to 'Unpublish', unpublish_post_path(@post), data: { turbo_method: :patch }, class: 'px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg' %>
+        <% else %>
+          <%= link_to 'Publish', publish_post_path(@post), data: { turbo_method: :patch }, class: 'px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg' %>
+        <% end %>
       <% end %>
-      <%= link_to 'Edit', edit_post_path(@post), class: 'px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg' %>
-      <%= link_to 'Delete', @post, data: { turbo_method: :delete }, class: 'px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg' %>
+      <% if allowed_to?(:update?, @post) %>
+        <%= link_to 'Edit', edit_post_path(@post), class: 'px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg' %>
+      <% end %>
+      <% if allowed_to?(:destroy?, @post) %>
+        <%= link_to 'Delete', @post, data: { turbo_method: :delete }, class: 'px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg' %>
+      <% end %>
     </div>
   </article>
 
@@ -48,11 +54,6 @@
     <div class="border-t border-gray-200 pt-6">
       <h4 class="text-lg font-semibold text-gray-900 mb-4">Add a Comment</h4>
       <%= form_with model: [@post, @post.comments.build], local: true, class: 'space-y-4' do |form| %>
-        <div>
-          <%= form.label :user_id, "Comment as:", class: 'block text-sm font-medium text-gray-700 mb-1' %>
-          <%= form.collection_select :user_id, User.all, :id, :author_name, { prompt: "Select a user" }, { required: true, class: 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500' } %>
-        </div>
-        
         <div>
           <%= form.label :content, "Your comment:", class: 'block text-sm font-medium text-gray-700 mb-1' %>
           <%= form.text_area :content, rows: 4, required: true, placeholder: "Write your comment here...", class: 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500' %>

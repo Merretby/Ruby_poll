@@ -1,7 +1,24 @@
 class PostsController < ApplicationController
+  skip_before_action :authenticate_user!, only: [:index, :show]
   before_action :set_post, only: [:show, :edit, :update, :destroy, :publish, :unpublish]
+  before_action only: :edit do
+    authorize! @post, to: :update?
+  end
+  before_action only: :update do
+    authorize! @post, to: :update?
+  end
+  before_action only: :destroy do
+    authorize! @post, to: :destroy?
+  end
+  before_action only: :publish do
+    authorize! @post, to: :publish?
+  end
+  before_action only: :unpublish do
+    authorize! @post, to: :unpublish?
+  end
+  
   def index
-    @posts = Post.includes(:user).recent
+    @posts = authorized_scope(Post.includes(:user).recent)
     @posts = @posts.published if params[:status] == 'published'
     @posts = @posts.drafts if params[:status] == 'drafts'
     @posts = @posts.by_author(params[:author_id]) if params[:author_id].present?
@@ -16,12 +33,11 @@ class PostsController < ApplicationController
   end
 
   def create
-    user = User.find(post_params[:user_id])
     publish_now = post_params[:published_at].present?
     
     result = Posts::Create.call(
-      user: user,
-      post_params: post_params.except(:user_id, :published_at),
+      user: current_user,
+      post_params: post_params.except(:published_at),
       publish_now: publish_now
     )
     
@@ -53,10 +69,7 @@ class PostsController < ApplicationController
   end
 
   def publish
-    # For demo purposes, using first user. In production, use current_user
-    publisher = User.first
-    
-    result = Posts::Publish.call(post: @post, publisher: publisher)
+    result = Posts::Publish.call(post: @post, publisher: current_user)
     
     respond_to do |format|
       if result.success?
@@ -88,6 +101,6 @@ class PostsController < ApplicationController
   end
 
   def post_params
-    params.require(:post).permit(:title, :body, :published_at, :user_id)
+    params.require(:post).permit(:title, :body, :published_at)
   end
 end

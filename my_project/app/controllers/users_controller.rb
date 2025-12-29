@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
+  before_action :authorize_admin!, only: [:index, :show, :new, :create, :edit, :update, :destroy]
 
   def index
     @users = User.all
@@ -55,5 +56,11 @@ class UsersController < ApplicationController
 
   def user_params
     params.expect(user: [:name, :email, :role])
+  end
+
+  def authorize_admin!
+    unless current_user.admin?
+      redirect_to root_path, alert: 'You are not authorized to access this page.'
+    end
   end
 end

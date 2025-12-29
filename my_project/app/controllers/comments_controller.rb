@@ -2,12 +2,10 @@ class CommentsController < ApplicationController
   before_action :set_post
 
   def create
-    user = User.find(comment_params[:user_id])
-    
     result = Comments::Create.call(
       post: @post,
-      user: user,
-      comment_params: comment_params.except(:user_id)
+      user: current_user,
+      comment_params: comment_params
     )
 
     if result.success?
@@ -40,6 +38,6 @@ class CommentsController < ApplicationController
   end
 
   def comment_params
-    params.require(:comment).permit(:content, :user_id)
+    params.require(:comment).permit(:content)
   end
 end

@@ -10,12 +10,18 @@
 
 <%= turbo_stream.replace dom_id(@post, :actions) do %>
   <div id="<%= dom_id(@post, :actions) %>" class="px-8 py-4 bg-gray-50 border-t border-gray-200 flex gap-3">
-    <% if @post.published? %>
-      <%= link_to 'Unpublish', unpublish_post_path(@post), data: { turbo_method: :patch }, class: 'px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg' %>
-    <% else %>
-      <%= link_to 'Publish', publish_post_path(@post), data: { turbo_method: :patch }, class: 'px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg' %>
+    <% if allowed_to?(:publish?, @post) || allowed_to?(:unpublish?, @post) %>
+      <% if @post.published? %>
+        <%= link_to 'Unpublish', unpublish_post_path(@post), data: { turbo_method: :patch }, class: 'px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg' %>
+      <% else %>
+        <%= link_to 'Publish', publish_post_path(@post), data: { turbo_method: :patch }, class: 'px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg' %>
+      <% end %>
     <% end %>
-    <%= link_to 'Edit', edit_post_path(@post), class: 'px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg' %>
-    <%= link_to 'Delete', @post, data: { turbo_method: :delete }, class: 'px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg' %>
+    <% if allowed_to?(:update?, @post) %>
+      <%= link_to 'Edit', edit_post_path(@post), class: 'px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg' %>
+    <% end %>
+    <% if allowed_to?(:destroy?, @post) %>
+      <%= link_to 'Delete', @post, data: { turbo_method: :delete }, class: 'px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg' %>
+    <% end %>
   </div>
 <% end %>
