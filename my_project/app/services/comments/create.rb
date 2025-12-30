@@ -1,15 +1,5 @@
 module Comments
   class Create < ApplicationService
-    SPAM_KEYWORDS = %w[
-      viagra
-      casino
-      lottery
-      pills
-      crypto
-      click-here
-      winner
-      congratulations
-    ].freeze
 
     def initialize(post:, user:, comment_params:)
       @post = post
@@ -20,19 +10,9 @@ module Comments
     def call
       comment = @post.comments.build(@comment_params.merge(user: @user))
 
-      # Check for spam
-      if spam_detected?(comment.content)
-        return Result.new(
-          success: false,
-          comment: comment,
-          error: "Comment blocked: spam detected",
-          error_code: :spam_blocked
-        )
-      end
-
-      # Validate and save with transaction
-      ActiveRecord::Base.transaction do
+      result = ActiveRecord::Base.transaction do
         if comment.save
+          send_notifications(comment)
           Result.new(success: true, comment: comment)
         else
           raise ActiveRecord::Rollback
@@ -43,15 +23,20 @@ module Comments
         error: comment.errors.full_messages.join(', '),
         error_code: :invalid
       )
+      
+      result
     end
 
     private
 
-    def spam_detected?(content)
-      return false if content.blank?
+    def send_notifications(comment)
+      CommentMailer.new_comment(comment, @post.user).deliver_later unless @post.user == @user
       
-      normalized_content = content.downcase
-      SPAM_KEYWORDS.any? { |keyword| normalized_content.include?(keyword) }
+      previous_commenters = @post.comments.where.not(id: comment.id).includes(:user).map(&:user).uniq - [@post.user, @user]
+      previous_commenters.each do |commenter|
+        CommentMailer.new_comment(comment, commenter).deliver_later
+      end
     end
+
   end
 end

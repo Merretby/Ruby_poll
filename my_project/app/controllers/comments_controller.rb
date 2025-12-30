@@ -12,8 +12,6 @@ class CommentsController < ApplicationController
       redirect_to @post, notice: "Comment added successfully."
     else
       alert_message = case result.error_code
-                      when :spam_blocked
-                        "Your comment was blocked for containing spam content."
                       when :invalid
                         "Failed to add comment: #{result.error}"
                       else

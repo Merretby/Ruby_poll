@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>New Comment on "<%= @post.title %>"</h1>
+    
+    <p>Hi <%= @recipient.author_name %>,</p>
+    
+    <p><%= @commenter.author_name %> commented:</p>
+    
+    <blockquote style="border-left: 4px solid #ccc; padding-left: 1rem; margin: 1rem 0; color: #666;">
+      <%= simple_format(@comment.content) %>
+    </blockquote>
+    
+    <p>
+      <%= link_to 'View the post', post_url(@post) %>
+    </p>
+  </body>
+</html>

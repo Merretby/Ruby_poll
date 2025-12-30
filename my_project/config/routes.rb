@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
   devise_for :users
+  
+  # Mount letter_opener_web for viewing emails in development
+  mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
+  
   resources :posts do
     resources :comments, only: [:create, :destroy]
     member do

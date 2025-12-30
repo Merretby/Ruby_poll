@@ -6,6 +6,12 @@
   </div>
 
   <article class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <% if @post.cover_image.attached? %>
+      <div class="w-full h-96 overflow-hidden">
+        <%= image_tag rails_blob_path(@post.cover_image, disposition: "inline"), alt: @post.title, class: 'w-full h-full object-cover' %>
+      </div>
+    <% end %>
+    
     <div class="bg-blue-600 px-8 py-12 text-white">
       <h1 class="text-4xl font-bold mb-4"><%= @post.title %></h1>
       <div class="flex items-center space-x-4 text-blue-100">
