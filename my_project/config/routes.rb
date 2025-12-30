@@ -1,5 +1,10 @@
+require 'sidekiq/web'
+
 Rails.application.routes.draw do
   devise_for :users
+  
+  # Mount Sidekiq web interface
+  mount Sidekiq::Web => '/sidekiq'
   
   # Mount letter_opener_web for viewing emails in development
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?

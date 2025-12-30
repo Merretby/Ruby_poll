@@ -40,9 +40,6 @@ gem "thruster", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 1.2"
 
-# Asynchronous processing for background jobs
-gem "sucker_punch"
-
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
@@ -74,3 +71,6 @@ end
 gem "tailwindcss-rails", "~> 4.4"
 gem "devise"
 gem "action_policy"
+gem 'sucker_punch'
+gem "redis", "~> 5.0"
+gem "sidekiq", "~> 7.0"

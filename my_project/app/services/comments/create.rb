@@ -30,11 +30,11 @@ module Comments
     private
 
     def send_notifications(comment)
-      CommentMailer.new_comment(comment, @post.user).deliver_later unless @post.user == @user
+      CommentNotificationJob.perform_later(comment.id, @post.user.id) unless @post.user == @user
       
       previous_commenters = @post.comments.where.not(id: comment.id).includes(:user).map(&:user).uniq - [@post.user, @user]
       previous_commenters.each do |commenter|
-        CommentMailer.new_comment(comment, commenter).deliver_later
+        CommentNotificationJob.perform_later(comment.id, commenter.id)
       end
     end
 
